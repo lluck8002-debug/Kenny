@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journal d'Analyse Mensuelle — Forex</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #080e1c;
+  --navy2:   #0f1828;
+  --navy3:   #162035;
+  --gold:    #c9a84c;
+  --gold-l:  #f0d080;
+  --gold-d:  #9a7a2e;
+  --silver:  #8fa0b8;
+  --cream:   #f4edd8;
+  --cream2:  #e8dfc4;
+  --green:   #1d8a52;
+  --green-l: #d0f0e0;
+  --red:     #b83030;
+  --red-l:   #fad8d8;
+  --blue:    #2a6dba;
+  --blue-l:  #d0e4fa;
+  --orange:  #c87820;
+  --border:  rgba(201,168,76,0.22);
+  --border2: rgba(201,168,76,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--navy);
+  color: var(--cream);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 15% 0%, rgba(201,168,76,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 100%, rgba(42,109,186,0.07) 0%, transparent 55%);
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: linear-gradient(180deg, #050a14 0%, var(--navy2) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 0;
+  height: 58px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+.logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--gold-l);
+  letter-spacing: 2px;
+  flex: 0 0 auto;
+  margin-right: 28px;
+}
+.logo span { color: var(--silver); font-size: 0.7rem; display:block; letter-spacing:3px; font-family:'Lato',sans-serif; font-weight:300; margin-top:1px; }
+.header-controls { display:flex; align-items:center; gap:10px; flex:1; flex-wrap:wrap; }
+.ctrl-label { font-size:0.7rem; color:var(--silver); letter-spacing:1.5px; text-transform:uppercase; white-space:nowrap; }
+.ctrl-select {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--cream); padding: 6px 12px;
+  font-family: 'Lato', sans-serif; font-size: 0.82rem; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ctrl-select:focus { outline:none; border-color: var(--gold); }
+.ctrl-sep { width:1px; height:24px; background:var(--border); margin:0 6px; }
+.btn-new {
+  margin-left: auto;
+  padding: 7px 18px; background: var(--gold); color: var(--navy);
+  border: none; border-radius: 6px; font-family:'Cinzel',serif;
+  font-size: 0.75rem; letter-spacing:1px; cursor: pointer; font-weight:600;
+  transition: all 0.2s; white-space:nowrap;
+}
+.btn-new:hover { background: var(--gold-l); transform:translateY(-1px); }
+
+/* ── MAIN LAYOUT ── */
+.main { max-width: 1340px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* ── PAIR SELECTOR ── */
+.pair-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+  padding: 16px 20px; background: var(--navy2);
+  border: 1px solid var(--border); border-radius: 14px;
+}
+.pair-tab {
+  padding: 8px 18px; border: 1px solid var(--border);
+  border-radius: 24px; background: transparent;
+  color: rgba(244,237,216,0.5); font-family:'Lato',sans-serif;
+  font-size: 0.82rem; font-weight:700; cursor:pointer; transition:all 0.25s;
+  letter-spacing: 0.5px;
+}
+.pair-tab:hover { border-color: var(--gold-d); color: var(--cream); }
+.pair-tab.active {
+  background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
+  border-color: var(--gold); color: var(--gold-l);
+  box-shadow: 0 0 12px rgba(201,168,76,0.15);
+}
+
+/* ── PAGE HEADER ── */
+.analysis-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px; gap: 20px; flex-wrap: wrap;
+}
+.analysis-title { font-family:'Cinzel',serif; font-size:1.6rem; color:var(--gold-l); letter-spacing:2px; }
+.analysis-subtitle { font-size:0.82rem; color:var(--silver); margin-top:4px; letter-spacing:0.5px; }
+.analysis-meta { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.meta-badge {
+  padding: 5px 14px; border-radius: 20px; font-size:0.72rem; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+}
+.meta-bull { background:var(--green-l); color:var(--green); }
+.meta-bear { background:var(--red-l); color:var(--red); }
+.meta-neut { background:var(--blue-l); color:var(--blue); }
+.meta-wait { background:rgba(200,120,32,0.15); color:var(--orange); border:1px solid rgba(200,120,32,0.3); }
+
+/* ── TIMEFRAME SECTION ── */
+.tf-section {
+  margin-bottom: 28px;
+  background: var(--navy2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.tf-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px;
+  background: linear-gradient(90deg, rgba(201,168,76,0.1) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select:none;
+  transition: background 0.2s;
+}
+.tf-header:hover { background: linear-gradient(90deg, rgba(201,168,76,0.15) 0%, transparent 100%); }
+.tf-badge {
+  font-family:'Cinzel',serif; font-size:0.85rem; font-weight:700;
+  color: var(--navy); padding: 4px 14px; border-radius:6px; letter-spacing:1px;
+}
+.tf-weekly .tf-badge { background: var(--gold); }
+.tf-daily  .tf-badge { background: var(--silver); color:var(--navy2); }
+.tf-h4     .tf-badge { background: var(--blue); color:white; }
+.tf-h1     .tf-badge { background: var(--green); color:white; }
+
+.tf-title { font-family:'Cinzel',serif; font-size:0.9rem; color:var(--cream); letter-spacing:1px; flex:1; }
+.tf-toggle { color:var(--silver); font-size:0.8rem; transition:transform 0.3s; }
+.tf-toggle.open { transform:rotate(180deg); }
+.tf-body { padding: 20px 22px; }
+.tf-body.collapsed { display:none; }
+
+/* ── NOTES AREA ── */
+.notes-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+@media(max-width:700px) { .notes-row { grid-template-columns:1fr; } }
+
+.note-block { display:flex; flex-direction:column; gap:6px; }
+.note-label { font-size:0.68rem; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; font-weight:700; }
+.note-textarea {
+  background: var(--navy3); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--cream); padding: 10px 14px;
+  font-family:'Lato',sans-serif; font-size:0.85rem; line-height:1.65;
+  resize: vertical; min-height:80px; transition:border-color 0.2s;
+  font-weight:300;
+}
+.note-textarea:focus { outline:none; border-color:var(--gold); }
+.note-textarea::placeholder { color:rgba(143,160,184,0.45); font-style:italic; }
+
+/* ── SENTIMENT ROW ── */
+.sentiment-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; align-items:center; }
+.sent-label { font-size:0.68rem; color:var(--silver); text-transform:uppercase; letter-spacing:1px; margin-right:4px; }
+.sent-btn {
+  padding:5px 14px; border-radius:20px; border:1px solid; font-size:0.75rem;
+  font-weight:700; cursor:pointer; transition:all 0.2s; background:transparent;
+  letter-spacing:0.5px;
+}
+.sent-bull { border-color:var(--green); color:var(--green); }
+.sent-bull.sel, .sent-bull:hover { background:var(--green-l); }
+.sent-bear { border-color:var(--red); color:var(--red); }
+.sent-bear.sel, .sent-bear:hover { background:var(--red-l); }
+.sent-neut { border-color:var(--blue); color:var(--blue); }
+.sent-neut.sel, .sent-neut:hover { background:var(--blue-l); }
+.sent-wait { border-color:var(--orange); color:var(--orange); }
+.sent-wait.sel, .sent-wait:hover { background:rgba(200,120,32,0.12); }
+
+/* ── WEEKLY GRID ── */
+.weeks-title {
+  font-size:0.7rem; color:var(--gold); text-transform:uppercase;
+  letter-spacing:2px; font-weight:700; margin-bottom:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.weeks-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.weeks-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+@media(max-width:860px) { .weeks-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:480px) { .weeks-grid { grid-template-columns:1fr; } }
+
+/* ── WEEK COLUMN ── */
+.week-col {
+  background: var(--navy3); border:1px solid var(--border2);
+  border-radius:12px; overflow:hidden; transition:border-color 0.2s;
+}
+.week-col:hover { border-color:var(--border); }
+.week-header {
+  padding:8px 12px; background:rgba(201,168,76,0.07);
+  border-bottom:1px solid var(--border2);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.week-num { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--gold); letter-spacing:1px; }
+.week-dates { font-size:0.65rem; color:var(--silver); }
+.week-body { padding:10px; display:flex; flex-direction:column; gap:8px; }
+
+/* ── IMAGE SLOT ── */
+.img-slot-wrap { position:relative; }
+.img-slot-label { font-size:0.62rem; color:var(--silver); letter-spacing:0.8px; text-transform:uppercase; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; }
+.img-slot-label span { color:var(--gold-d); font-size:0.6rem; cursor:pointer; }
+.img-slot-label span:hover { color:var(--gold); }
+.img-slot {
+  width:100%; aspect-ratio:16/9; border:1.5px dashed rgba(201,168,76,0.28);
+  border-radius:8px; background:rgba(8,14,28,0.6);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; overflow:hidden; position:relative; transition:border-color 0.2s;
+}
+.img-slot:hover { border-color:var(--gold); }
+.img-slot img { width:100%; height:100%; object-fit:cover; display:block; }
+.img-slot .slot-ph { display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none; }
+.img-slot .slot-ph-icon { font-size:1.4rem; opacity:0.45; }
+.img-slot .slot-ph-txt { font-size:0.62rem; color:var(--silver); opacity:0.6; }
+.img-slot input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.img-slot .del-img {
+  position:absolute; top:5px; right:5px; background:rgba(184,48,48,0.88);
+  color:white; border:none; border-radius:50%; width:20px; height:20px;
+  font-size:0.65rem; cursor:pointer; display:none; align-items:center; justify-content:center;
+}
+.img-slot:hover .del-img.has-img { display:flex; }
+
+/* ── SCENARIO TAGS ── */
+.scenario-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.scenario-tag {
+  padding:3px 10px; border-radius:12px; font-size:0.68rem; font-weight:700;
+  cursor:pointer; user-select:none; transition:all 0.2s; border:1px solid;
+  letter-spacing:0.3px;
+}
+.stag-buy  { border-color:var(--green); color:var(--green); }
+.stag-buy.on  { background:var(--green-l); }
+.stag-sell { border-color:var(--red); color:var(--red); }
+.stag-sell.on { background:var(--red-l); }
+.stag-wait { border-color:var(--orange); color:var(--orange); }
+.stag-wait.on { background:rgba(200,120,32,0.12); }
+.stag-key  { border-color:var(--blue); color:var(--blue); }
+.stag-key.on  { background:var(--blue-l); }
+
+/* ── PROGRESS BAR ── */
+.tf-progress { height:3px; background:var(--navy3); border-radius:2px; margin-bottom:18px; }
+.tf-progress-bar { height:100%; border-radius:2px; transition:width 0.5s; }
+.tf-weekly .tf-progress-bar { background:var(--gold); }
+.tf-daily  .tf-progress-bar { background:var(--silver); }
+.tf-h4     .tf-progress-bar { background:var(--blue); }
+.tf-h1     .tf-progress-bar { background:var(--green); }
+
+/* ── SUMMARY STRIP ── */
+.summary-strip {
+  display:flex; gap:10px; flex-wrap:wrap; padding:14px 22px;
+  border-top:1px solid var(--border2); background:rgba(0,0,0,0.15);
+}
+.strip-item { font-size:0.75rem; color:var(--silver); }
+.strip-item strong { color:var(--cream); }
+
+/* ── MODAL ── */
+.img-modal {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92);
+  z-index:1000; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+}
+.img-modal.open { display:flex; }
+.img-modal img { max-width:94vw; max-height:84vh; border-radius:10px; border:2px solid var(--gold); object-fit:contain; }
+.img-modal-info { color:var(--gold); font-family:'Cinzel',serif; font-size:0.8rem; letter-spacing:1px; text-align:center; }
+.img-modal-close { position:fixed; top:16px; right:20px; background:var(--gold); color:var(--navy); border:none; border-radius:50%; width:36px; height:36px; font-size:1rem; cursor:pointer; font-weight:700; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align:center; padding:48px 20px; color:var(--silver); }
+.empty-state .es-icon { font-size:2.8rem; margin-bottom:12px; opacity:0.4; }
+.empty-state p { font-size:0.9rem; opacity:0.6; }
+
+/* ── SAVE BTN ── */
+.save-bar { position:fixed; bottom:20px; right:24px; display:flex; gap:10px; z-index:300; }
+.btn-save {
+  padding:10px 22px; background:var(--gold); color:var(--navy);
+  border:none; border-radius:8px; font-family:'Cinzel',serif;
+  font-size:0.78rem; letter-spacing:1px; cursor:pointer; font-weight:700;
+  box-shadow:0 4px 20px rgba(201,168,76,0.4); transition:all 0.2s;
+}
+.btn-save:hover { background:var(--gold-l); transform:translateY(-2px); }
+.save-toast {
+  position:fixed; bottom:70px; right:24px; background:var(--green);
+  color:white; padding:8px 18px; border-radius:8px; font-size:0.8rem;
+  font-weight:700; z-index:400; opacity:0; transition:opacity 0.3s;
+  pointer-events:none;
+}
+.save-toast.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo">FOREX ANALYST<span>JOURNAL MENSUEL</span></div>
+  <div class="header-controls">
+    <span class="ctrl-label">Mois</span>
+    <select class="ctrl-select" id="selMonth" onchange="loadData()">
+      <option value="2025-01">Janvier 2025</option>
+      <option value="2025-02">Février 2025</option>
+      <option value="2025-03" selected>Mars 2025</option>
+      <option value="2025-04">Avril 2025</option>
+      <option value="2025-05">Mai 2025</option>
+      <option value="2025-06">Juin 2025</option>
+      <option value="2025-07">Juillet 2025</option>
+      <option value="2025-08">Août 2025</option>
+      <option value="2025-09">Septembre 2025</option>
+      <option value="2025-10">Octobre 2025</option>
+      <option value="2025-11">Novembre 2025</option>
+      <option value="2025-12">Décembre 2025</option>
+    </select>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label">Paire</span>
+    <select class="ctrl-select" id="selPairHeader" onchange="selectPairFromHeader()">
+      <option>AUD/SGD</option><option>AUD/USD</option>
+      <option>NZD/SGD</option><option>NZD/USD</option>
+      <option>EUR/SGD</option><option>EUR/USD</option>
+      <option>GBP/SGD</option><option>GBP/USD</option>
+    </select>
+    <button class="btn-new" onclick="exportData()">⬇ Exporter</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- PAIR TABS -->
+  <div class="pair-tabs">
+    <button class="pair-tab active" onclick="selectPair('AUD/SGD',this)">AUD/SGD</button>
+    <button class="pair-tab" onclick="selectPair('AUD/USD',this)">AUD/USD</button>
+    <button class="pair-tab" onclick="selectPair('NZD/SGD',this)">NZD/SGD</button>
+    <button class="pair-tab" onclick="selectPair('NZD/USD',this)">NZD/USD</button>
+    <button class="pair-tab" onclick="selectPair('EUR/SGD',this)">EUR/SGD</button>
+    <button class="pair-tab" onclick="selectPair('EUR/USD',this)">EUR/USD</button>
+    <button class="pair-tab" onclick="selectPair('GBP/SGD',this)">GBP/SGD</button>
+    <button class="pair-tab" onclick="selectPair('GBP/USD',this)">GBP/USD</button>
+  </div>
+
+  <!-- ANALYSIS CONTENT -->
+  <div id="analysisContent"></div>
+
+</div><!-- end main -->
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <button class="btn-save" onclick="saveData()">💾 Sauvegarder</button>
+</div>
+<div class="save-toast" id="saveToast">✅ Analyse sauvegardée !</div>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal" id="imgModal" onclick="closeModal()">
+  <button class="img-modal-close" onclick="closeModal()">✕</button>
+  <div class="img-modal-info" id="imgModalInfo"></div>
+  <img id="imgModalEl" src="" alt="">
+</div>
+
+<script>
+// ────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────
+const PAIRS = ['AUD/SGD','AUD/USD','NZD/SGD','NZD/USD','EUR/SGD','EUR/USD','GBP/SGD','GBP/USD'];
+const TFS   = [
+  { id:'weekly', label:'WEEKLY', cls:'tf-weekly', color:'#c9a84c',
+    desc:'Tendance générale, structure macro, niveaux clés HTF' },
+  { id:'daily',  label:'DAILY',  cls:'tf-daily',  color:'#8fa0b8',
+    desc:'Structure du marché daily, zones S/R, orderblocks' },
+  { id:'h4',     label:'H4',     cls:'tf-h4',     color:'#2a6dba',
+    desc:'Tendance intermédiaire, opportunités, scénarios d\'entrée' },
+  { id:'h1',     label:'H1',     cls:'tf-h1',     color:'#1d8a52',
+    desc:'Entrées précises, conformité H4/Daily, points de décision' },
+];
+const IMG_LABELS = ['Chart 1', 'Chart 2', 'Chart 3'];
+const WEEK_DATES = {
+  '2025-03': [
+    { num:'S1', dates:'03 — 07 Mar' },
+    { num:'S2', dates:'10 — 14 Mar' },
+    { num:'S3', dates:'17 — 21 Mar' },
+    { num:'S4', dates:'24 — 28 Mar' },
+  ]
+};
+
+let currentPair  = 'AUD/SGD';
+let currentMonth = '2025-03';
+
+// Storage: data[month][pair][tf] = { sentiment, notes:{trend,levels,scenarios,structure}, weeks:[{imgs:[b64,b64,b64], note}x4] }
+let data = {};
+
+function storageKey() { return `forex_monthly_${currentMonth}_${currentPair.replace('/','')}`; }
+function storageKeyAll(m,p) { return `forex_monthly_${m}_${p.replace('/','')}`; }
+
+function getEntry() {
+  const key = storageKey();
+  if (!data[key]) {
+    data[key] = {
+      sentiment: '',
+      notes: { trend:'', levels:'', scenarios:'', structure:'' },
+      tfs: {}
+    };
+    TFS.forEach(tf => {
+      data[key].tfs[tf.id] = {
+        sentiment: '',
+        notes: { trend:'', levels:'', scenarios:'', structure:'' },
+        weeks: Array.from({length:4}, () => ({ imgs:['','',''], note:'' }))
+      };
+    });
+  }
+  return data[key];
+}
+
+function saveData() {
+  const key = storageKey();
+  if (data[key]) localStorage.setItem(key, JSON.stringify(data[key]));
+  const toast = document.getElementById('saveToast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function loadData() {
+  currentMonth = document.getElementById('selMonth').value;
+  TFS.forEach(tf => {/* keep existing */});
+  // Try loading from localStorage
+  const key = storageKey();
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    try { data[key] = JSON.parse(saved); } catch(e) {}
+  }
+  renderAnalysis();
+}
+
+// ────────────────────────────────────────────────
+// RENDER
+// ────────────────────────────────────────────────
+function selectPair(pair, btn) {
+  currentPair = pair;
+  document.querySelectorAll('.pair-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('selPairHeader').value = pair;
+  loadData();
+}
+
+function selectPairFromHeader() {
+  const pair = document.getElementById('selPairHeader').value;
+  currentPair = pair;
+  document.querySelectorAll('.pair-tab').forEach(b => {
+    b.classList.toggle('active', b.textContent === pair);
+  });
+  loadData();
+}
+
+function getWeekDates() {
+  const wk = WEEK_DATES[currentMonth];
+  if (wk) return wk;
+  return [{num:'S1',dates:'Sem. 1'},{num:'S2',dates:'Sem. 2'},{num:'S3',dates:'Sem. 3'},{num:'S4',dates:'Sem. 4'}];
+}
+
+function monthLabel() {
+  const opts = document.getElementById('selMonth').options;
+  for (let o of opts) if (o.value === currentMonth) return o.text;
+  return currentMonth;
+}
+
+function renderAnalysis() {
+  const entry = getEntry();
+  const weeks = getWeekDates();
+  const container = document.getElementById('analysisContent');
+
+  // Count filled images across all TFs
+  let totalImgs = 0;
+  TFS.forEach(tf => {
+    const tfd = entry.tfs[tf.id];
+    tfd.weeks.forEach(w => w.imgs.forEach(img => { if(img) totalImgs++; }));
+  });
+
+  container.innerHTML = `
+    <!-- ANALYSIS HEADER -->
+    <div class="analysis-header">
+      <div>
+        <div class="analysis-title">${currentPair}</div>
+        <div class="analysis-subtitle">${monthLabel()}  ·  Analyse Multi-Timeframe  ·  ${totalImgs} screenshot${totalImgs!==1?'s':''} enregistré${totalImgs!==1?'s':''}</div>
+      </div>
+      <div class="analysis-meta" id="globalSentimentDisplay">
+        ${renderSentimentBadge(entry.sentiment)}
+      </div>
+    </div>
+
+    <!-- GLOBAL NOTES (optionnel) -->
+    <div class="tf-section" style="margin-bottom:28px;">
+      <div class="tf-header" onclick="toggleTF('global')">
+        <div class="tf-badge" style="background:var(--gold-d);color:var(--cream);font-size:0.75rem;">SYNTHÈSE</div>
+        <div class="tf-title">Vue d'ensemble — Biais directionnel du mois</div>
+        <div class="tf-toggle" id="toggle-global">▼</div>
+      </div>
+      <div class="tf-body" id="body-global">
+        <div class="sentiment-row">
+          <span class="sent-label">Biais global :</span>
+          ${['HAUSSIER','BAISSIER','NEUTRE','EN ATTENTE'].map((s,i) => `
+            <button class="sent-btn sent-${['bull','bear','neut','wait'][i]} ${entry.sentiment===s?'sel':''}"
+              onclick="setSentiment('global','${s}',this)">${s}</button>`).join('')}
+        </div>
+        <div class="notes-row">
+          <div class="note-block">
+            <div class="note-label">📌 Contexte macro & fondamental</div>
+            <textarea class="note-textarea" placeholder="Contexte économique, news majeures, corrélations inter-marchés..." rows="4"
+              onchange="saveNote('global','trend',this.value)">${entry.notes.trend}</textarea>
+          </div>
+          <div class="note-block">
+            <div class="note-label">🎯 Niveaux clés du mois</div>
+            <textarea class="note-textarea" placeholder="Résistances majeures, supports importants, zones de liquidité..." rows="4"
+              onchange="saveNote('global','levels',this.value)">${entry.notes.levels}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMEFRAME SECTIONS -->
+    ${TFS.map(tf => renderTFSection(tf, entry.tfs[tf.id], weeks)).join('')}
+  `;
+}
+
+function renderSentimentBadge(s) {
+  if (!s) return `<span class="meta-badge meta-wait">— Biais non défini</span>`;
+  const map = { 'HAUSSIER':'meta-bull', 'BAISSIER':'meta-bear', 'NEUTRE':'meta-neut', 'EN ATTENTE':'meta-wait' };
+  return `<span class="meta-badge ${map[s]||'meta-wait'}">${s}</span>`;
+}
+
+function renderTFSection(tf, tfd, weeks) {
+  const filledImgs = tfd.weeks.reduce((s,w)=>s+w.imgs.filter(Boolean).length,0);
+  const totalImgs  = 12; // 4 weeks × 3 imgs
+  const pct = Math.round(filledImgs/totalImgs*100);
+
+  const noteFields = tf.id === 'weekly'
+    ? [['trend','📈 Tendance générale','Structure macro, direction principale, contexte de long terme...'],
+       ['levels','🗺️ Niveaux HTF clés','Supports/résistances majeurs, zones OB, liquidités weekly...']]
+    : tf.id === 'daily'
+    ? [['structure','🧱 Structure du marché','CHoCH, BOS, tendance daily, orderblocks actifs...'],
+       ['levels','📍 Zones S/R importantes','Niveaux daily à surveiller, zones de décision...']]
+    : tf.id === 'h4'
+    ? [['trend','📊 Tendance H4 actuelle','Direction H4, conformité avec Daily/Weekly...'],
+       ['scenarios','⚡ Scénarios possibles','Scénario haussier, scénario baissier, invalidations...']]
+    : [['structure','🔍 Structure H1 (conformité H4)','Points d\'entrée possibles, OB H1, FVG, structure micro...'],
+       ['scenarios','✅ Niveaux d\'entrée précis','Prix exacts, confirmations requises, timing sessions...']];
+
+  return `
+  <div class="tf-section ${tf.cls}" id="section-${tf.id}">
+    <div class="tf-header" onclick="toggleTF('${tf.id}')">
+      <div class="tf-badge">${tf.label}</div>
+      <div class="tf-title">${tf.desc}</div>
+      <div style="font-size:0.72rem;color:var(--silver);margin-right:10px;">${filledImgs}/${totalImgs} 📷</div>
+      <div class="tf-toggle" id="toggle-${tf.id}">▼</div>
+    </div>
+
+    <div class="tf-body" id="body-${tf.id}">
+      <!-- Progress -->
+      <div class="tf-progress">
+        <div class="tf-progress-bar" style="width:${pct}%"></div>
+      </div>
+
+      <!-- Sentiment -->
+      <div class="sentiment-row">
+        <span class="sent-label">Biais ${tf.label} :</span>
+        ${['HAUSSIER','BAISSIER','NEUTRE','EN ATTENTE'].map((s,i) => `
+          <button class="sent-btn sent-${['bull','bear','neut','wait'][i]} ${tfd.sentiment===s?'sel':''}"
+            onclick="setSentiment('${tf.id}','${s}',this)">${s}</button>`).join('')}
+      </div>
+
+      <!-- Notes -->
+      <div class="notes-row" style="margin-bottom:20px;">
+        ${noteFields.map(([key,label,ph]) => `
+          <div class="note-block">
+            <div class="note-label">${label}</div>
+            <textarea class="note-textarea" placeholder="${ph}" rows="3"
+              onchange="saveTFNote('${tf.id}','${key}',this.value)">${tfd.notes[key]||''}</textarea>
+          </div>`).join('')}
+      </div>
+
+      <!-- Weekly screenshots -->
+      <div class="weeks-title">Screenshots par semaine</div>
+      <div class="weeks-grid">
+        ${weeks.map((wk,wi) => renderWeekCol(tf.id, wi, wk, tfd.weeks[wi])).join('')}
+      </div>
+
+    </div>
+
+    <div class="summary-strip">
+      <span class="strip-item">Biais : <strong>${tfd.sentiment||'—'}</strong></span>
+      <span class="strip-item">·</span>
+      <span class="strip-item">Screenshots : <strong>${filledImgs}/12</strong></span>
+      <span class="strip-item">·</span>
+      <span class="strip-item">Complétion : <strong>${pct}%</strong></span>
+    </div>
+  </div>`;
+}
+
+function renderWeekCol(tfId, weekIdx, wkMeta, weekData) {
+  return `
+  <div class="week-col">
+    <div class="week-header">
+      <span class="week-num">${wkMeta.num}</span>
+      <span class="week-dates">${wkMeta.dates}</span>
+    </div>
+    <div class="week-body">
+      ${IMG_LABELS.map((lbl,imgIdx) => renderImgSlot(tfId, weekIdx, imgIdx, lbl, weekData.imgs[imgIdx])).join('')}
+      <textarea class="note-textarea" placeholder="Note rapide S${weekIdx+1}..." rows="2" style="margin-top:4px;font-size:0.78rem;"
+        onchange="saveWeekNote('${tfId}',${weekIdx},this.value)">${weekData.note||''}</textarea>
+    </div>
+  </div>`;
+}
+
+function renderImgSlot(tfId, weekIdx, imgIdx, label, src) {
+  const hasImg = !!src;
+  const slotId = `slot-${tfId}-${weekIdx}-${imgIdx}`;
+  return `
+  <div class="img-slot-wrap">
+    <div class="img-slot-label">
+      ${label}
+      ${hasImg ? `<span onclick="clearSlot('${tfId}',${weekIdx},${imgIdx})">✕ Supprimer</span>` : ''}
+    </div>
+    <div class="img-slot" id="${slotId}" ${!hasImg?'':''}>
+      ${hasImg
+        ? `<img src="${src}" onclick="openModal('${src}','${currentPair} · ${document.getElementById('selMonth').options[document.getElementById('selMonth').selectedIndex].text} · S${weekIdx+1} · ${label}')" style="cursor:zoom-in;">`
+        : `<div class="slot-ph"><div class="slot-ph-icon">📷</div><div class="slot-ph-txt">Ajouter screenshot</div></div>`
+      }
+      ${hasImg ? `<button class="del-img has-img" onclick="clearSlot('${tfId}',${weekIdx},${imgIdx})">✕</button>` : ''}
+      ${!hasImg ? `<input type="file" accept="image/*" onchange="uploadSlot(this,'${tfId}',${weekIdx},${imgIdx})">` : ''}
+    </div>
+  </div>`;
+}
+
+// ────────────────────────────────────────────────
+// ACTIONS
+// ────────────────────────────────────────────────
+function toggleTF(id) {
+  const body   = document.getElementById(`body-${id}`);
+  const toggle = document.getElementById(`toggle-${id}`);
+  if (!body) return;
+  body.classList.toggle('collapsed');
+  toggle.classList.toggle('open');
+}
+
+function setSentiment(tfId, value, btn) {
+  const entry = getEntry();
+  if (tfId === 'global') {
+    entry.sentiment = value;
+    document.getElementById('globalSentimentDisplay').innerHTML = renderSentimentBadge(value);
+  } else {
+    entry.tfs[tfId].sentiment = value;
+  }
+  // Update button states in that row
+  const parent = btn.closest('.sentiment-row');
+  parent.querySelectorAll('.sent-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // Update summary strip
+  renderSummaryStrip(tfId);
+}
+
+function renderSummaryStrip(tfId) {
+  const entry = getEntry();
+  const tfd = entry.tfs[tfId];
+  if (!tfd) return;
+  const filledImgs = tfd.weeks.reduce((s,w)=>s+w.imgs.filter(Boolean).length,0);
+  const pct = Math.round(filledImgs/12*100);
+  const strip = document.querySelector(`#section-${tfId} .summary-strip`);
+  if (strip) strip.innerHTML = `
+    <span class="strip-item">Biais : <strong>${tfd.sentiment||'—'}</strong></span>
+    <span class="strip-item">·</span>
+    <span class="strip-item">Screenshots : <strong>${filledImgs}/12</strong></span>
+    <span class="strip-item">·</span>
+    <span class="strip-item">Complétion : <strong>${pct}%</strong></span>
+  `;
+  // Update progress bar
+  const bar = document.querySelector(`#section-${tfId} .tf-progress-bar`);
+  if (bar) bar.style.width = pct + '%';
+}
+
+function saveNote(scope, field, value) {
+  const entry = getEntry();
+  entry.notes[field] = value;
+}
+
+function saveTFNote(tfId, field, value) {
+  const entry = getEntry();
+  if (entry.tfs[tfId]) entry.tfs[tfId].notes[field] = value;
+}
+
+function saveWeekNote(tfId, weekIdx, value) {
+  const entry = getEntry();
+  if (entry.tfs[tfId]) entry.tfs[tfId].weeks[weekIdx].note = value;
+}
+
+function uploadSlot(input, tfId, weekIdx, imgIdx) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const entry = getEntry();
+    entry.tfs[tfId].weeks[weekIdx].imgs[imgIdx] = e.target.result;
+    renderAnalysis(); // re-render to show image + update counts
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSlot(tfId, weekIdx, imgIdx) {
+  const entry = getEntry();
+  entry.tfs[tfId].weeks[weekIdx].imgs[imgIdx] = '';
+  renderAnalysis();
+}
+
+function openModal(src, info) {
+  document.getElementById('imgModalEl').src = src;
+  document.getElementById('imgModalInfo').textContent = info;
+  document.getElementById('imgModal').classList.add('open');
+}
+function closeModal() { document.getElementById('imgModal').classList.remove('open'); }
+
+function exportData() {
+  const key = storageKey();
+  const entry = data[key];
+  if (!entry) { alert('Aucune donnée à exporter pour ce mois/paire.'); return; }
+  // Build a text summary
+  let txt = `JOURNAL D'ANALYSE — ${currentPair} — ${monthLabel()}\n${'='.repeat(60)}\n\n`;
+  txt += `BIAIS GLOBAL : ${entry.sentiment || '—'}\n`;
+  txt += `CONTEXTE : ${entry.notes.trend || '—'}\n`;
+  txt += `NIVEAUX CLÉS : ${entry.notes.levels || '—'}\n\n`;
+  TFS.forEach(tf => {
+    const tfd = entry.tfs[tf.id];
+    txt += `${tf.label}\n${'-'.repeat(30)}\n`;
+    txt += `Biais : ${tfd.sentiment||'—'}\n`;
+    Object.entries(tfd.notes).forEach(([k,v]) => { if(v) txt += `${k} : ${v}\n`; });
+    tfd.weeks.forEach((w,wi) => {
+      const imgs = w.imgs.filter(Boolean).length;
+      txt += `  S${wi+1} : ${imgs} image${imgs!==1?'s':''} · ${w.note||''}\n`;
+    });
+    txt += '\n';
+  });
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Analyse_${currentPair.replace('/','')}_${currentMonth}.txt`;
+  a.click();
+}
+
+// ────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
